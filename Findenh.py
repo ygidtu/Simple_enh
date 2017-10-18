@@ -19,13 +19,6 @@ except ImportError as err:
     print("pip3 install pyBigWig")
     sys.exit()
 
-try:
-    null = open(os.devnull, 'w')
-    check_call('bwtool --version', shell=True, stdout=null, stderr=STDOUT)
-    null.close()
-except CalledProcessError:
-    print('Please install bwtool properly first')
-    sys.exit()
 from Bed import Bed
 from Bed6 import Bed6
 
@@ -130,7 +123,7 @@ class DealSignal:
             if path is not None and os.path.exists(path):
                 bw = pyBigWig.open(path)
                 if bw.isBigWig:
-                    files.append(path)
+                    files.append(bw)
                 else:
                     raise ValueError('%s - %s is not BigWig file' % (i, path))
             else:
@@ -138,53 +131,27 @@ class DealSignal:
         return tuple(files)
 
     @staticmethod
-    def _call_bwtool_(bed, bigwig):
+    def _cal_sum_(lines, bigwig):
         u"""
-        调用bwtool
+        统计bw文件的信号
         """
-        print('bwtool start processing %s' % bigwig)
-        commands = [
-            'bwtool',
-            'summary',
-            bed,
-            bigwig,
-            'stdout',
-            '-with-sum'
-        ]
-        data = {}
-        try:
-            proc = Popen(commands, stdout=PIPE)
-
-            while True:
-                line = proc.stdout.readline().decode('utf-8')
-
-                if not line:
-                    break
-
-                lines = line.split()
-
-                key = Bed6(
-                    chrom=lines[0], start=int(
-                        lines[1]), end=int(lines[2])
-                )
-                data.update({key: float(lines[-1])})
-        except CalledProcessError as err:
-            print(err)
-            sys.exit()
-        return data
+        chrom = lines[0]
+        start = int(lines[1])
+        end = int(lines[2])
+        return sum(bigwig.values(chrom, start, end))
 
     def save(self, outfile):
         u"""
         保存结果
         """
-        me1 = self._call_bwtool_(self.bed, self.me1)
-        me3 = self._call_bwtool_(self.bed, self.me3)
-
         print('Start final comparing')
         with open(outfile, 'w+') as writer:
-            for key in me1.keys():
-                if me1[key] > me3[key]:
-                    writer.write(key.get_bed() + '\n')
+            with open(self.bed) as reader:
+                for line in reader:
+                    lines = line.split()
+
+                    if self._cal_sum_(lines, self.me1) > self._cal_sum_(lines, self.me3):
+                        writer.write(line)
 
 
 if __name__ == '__main__':
