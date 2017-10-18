@@ -7,4 +7,4 @@ requires
 - bwtool
     - [https://github.com/CRG-Barcelona/bwtool/wiki](https://github.com/CRG-Barcelona/bwtool/wiki)
 
-very simple standards, very simple usage
+very simple standards, very simple usage, just run FindEnh.py
