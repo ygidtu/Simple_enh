@@ -82,5 +82,5 @@ then you could just run:
 - `python3 Find_enhancer.py batch -i xxx/HepG2/ -o test` 
     - just calculate the enhancer of HepG2
 
-#### Please note that do not please same format of files in same direcotry (2 bigBed files in same directory), and do not name those files with special symbol
+#### Please note that do not put same format of files in same direcotry (2 bigBed files in same directory), and do not name those files with special symbol
 
