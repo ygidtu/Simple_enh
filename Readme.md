@@ -3,6 +3,7 @@ Find enhancers
 ## pyBigWig are required, `pip3 install pyBigWig`
 pybigWig: [<https://github.com/dpryan79/pyBigWig>](https://github.com/dpryan79/pyBigWig)
 
+**Note that: pyBigWig require the libcurl, so maybe install the libcurl4-openssl-dev before you try to install the pybigwig**
 
 **Base on Dnase-seq data and 3 histone modification data**
 - H3K27ac
